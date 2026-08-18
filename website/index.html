@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AEROXMD - Autonomous Quadcopter Framework. An open-source full-stack autonomous aerial navigation framework by the Robotronics Club at IIT Mandi.">
+  <title>AEROXMD &middot; Autonomous Quadcopter Framework | Robotronics Club, IIT Mandi</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='8' fill='%234aa3ff'/%3E%3Crect x='46' y='50' width='8' height='22' rx='3' fill='%238b5cf6'/%3E%3Ccircle cx='50' cy='78' r='6' fill='none' stroke='%2334d399' stroke-width='3'/%3E%3Crect x='36' y='34' width='28' height='10' rx='4' fill='%23111a2a' stroke='%234aa3ff' stroke-width='3'/%3E%3Crect x='36' y='20' width='10' height='8' rx='2' fill='none' stroke='%23e9eef8' stroke-width='3'/%3E%3Crect x='54' y='20' width='10' height='8' rx='2' fill='none' stroke='%23e9eef8' stroke-width='3'/%3E%3Crect x='36' y='44' width='10' height='8' rx='2' fill='none' stroke='%23e9eef8' stroke-width='3'/%3E%3Crect x='54' y='44' width='10' height='8' rx='2' fill='none' stroke='%23e9eef8' stroke-width='3'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <header class="site-header" id="site-header">
+    <nav class="nav container">
+      <a href="#home" class="brand" aria-label="AEROXMD home">
+        <svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/><path d="M12 12v6.5"/><circle cx="12" cy="19.5" r="1.6"/><rect x="8" y="7.5" width="8" height="2.6" rx="1.2"/><rect x="8.6" y="3.6" width="2.8" height="1.9" rx="0.9" fill="currentColor" stroke="none"/><rect x="12.6" y="3.6" width="2.8" height="1.9" rx="0.9" fill="currentColor" stroke="none"/><rect x="8.6" y="11.5" width="2.8" height="1.9" rx="0.9" fill="currentColor" stroke="none"/><rect x="12.6" y="11.5" width="2.8" height="1.9" rx="0.9" fill="currentColor" stroke="none"/></svg>
+        <span class="brand-text">AEROXMD</span>
+      </a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#architecture">Architecture</a></li>
+        <li><a href="#specs">Specs</a></li>
+        <li><a href="#get-started">Get Started</a></li>
+        <li><a href="#sponsors">Sponsors</a></li>
+        <li><a href="https://github.com/the-robotronics-club/quadcopter" class="btn btn-sm btn-primary" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+          GitHub
+        </a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="hero-bg" aria-hidden="true">
+        <span class="orb orb-1"></span>
+        <span class="orb orb-2"></span>
+        <span class="orb orb-3"></span>
+      </div>
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <p class="eyebrow">AEROXMD &middot; Aerial Robotics &middot; Robotronics Club, IIT Mandi</p>
+          <h1>Autonomous Quadcopter<br><span class="accent">Framework</span></h1>
+          <p class="lede typewriter">
+            An open-source, full-stack autonomous aerial navigation platform engineered
+            for rugged mountain environments &mdash; integrating high-performance state
+            estimation, trajectory planning, and edge computer vision.
+          </p>
+          <div class="hero-actions">
+            <a href="#get-started" class="btn btn-primary">Get Started</a>
+            <a href="https://github.com/the-robotronics-club/quadcopter" class="btn btn-ghost" target="_blank" rel="noopener">View on GitHub</a>
+          </div>
+          <ul class="hero-badges" aria-label="Technology stack">
+            <li>ROS 2 Humble</li>
+            <li>PX4 v1.14+</li>
+            <li>NVIDIA Jetson</li>
+            <li>YOLOv8</li>
+            <li>Gazebo Ignition</li>
+          </ul>
+        </div>
+        <div class="hero-visual" aria-hidden="true">
+          <svg class="drone" viewBox="0 0 520 520" role="presentation">
+            <defs>
+              <radialGradient id="droneGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#4aa3ff" stop-opacity="0.28"/>
+                <stop offset="100%" stop-color="#4aa3ff" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <circle cx="260" cy="260" r="250" fill="url(#droneGlow)"/>
+            <circle class="ring" cx="260" cy="260" r="188"/>
+            <circle class="ring" cx="260" cy="260" r="132"/>
+            <circle class="ring" cx="260" cy="260" r="76"/>
+            <g class="drone-arms">
+              <line x1="260" y1="260" x2="120" y2="120"/>
+              <line x1="260" y1="260" x2="400" y2="120"/>
+              <line x1="260" y1="260" x2="120" y2="400"/>
+              <line x1="260" y1="260" x2="400" y2="400"/>
+            </g>
+            <g class="rotor" transform="translate(120 120)">
+              <circle class="rotor-ring" r="52"/>
+              <g class="blades">
+                <ellipse rx="46" ry="7"/>
+                <ellipse rx="7" ry="46"/>
+              </g>
+            </g>
+            <g class="rotor" transform="translate(400 120)">
+              <circle class="rotor-ring" r="52"/>
+              <g class="blades">
+                <ellipse rx="46" ry="7"/>
+                <ellipse rx="7" ry="46"/>
+              </g>
+            </g>
+            <g class="rotor" transform="translate(120 400)">
+              <circle class="rotor-ring" r="52"/>
+              <g class="blades">
+                <ellipse rx="46" ry="7"/>
+                <ellipse rx="7" ry="46"/>
+              </g>
+            </g>
+            <g class="rotor" transform="translate(400 400)">
+              <circle class="rotor-ring" r="52"/>
+              <g class="blades">
+                <ellipse rx="46" ry="7"/>
+                <ellipse rx="7" ry="46"/>
+              </g>
+            </g>
+            <g class="drone-body" transform="translate(260 260)">
+              <rect x="-30" y="-26" width="60" height="52" rx="14"/>
+              <rect x="-20" y="-10" width="40" height="20" rx="6" fill="#4aa3ff"/>
+              <circle class="lens" cx="0" cy="0" r="6"/>
+              <rect class="body-led" x="-12" y="-20" width="24" height="4" rx="2"/>
+              <line class="antenna" x1="0" y1="-26" x2="0" y2="-44"/>
+              <circle class="antenna-tip" cx="0" cy="-46" r="3"/>
+              <rect class="payload" x="-12" y="30" width="24" height="16" rx="4"/>
+              <circle class="payload-lens" cx="0" cy="38" r="4"/>
+            </g>
+          </svg>
+          <div class="float-card fc-a">VIO + EKF2 &middot; Onboard</div>
+          <div class="float-card fc-b">YOLOv8 &middot; Edge GPU</div>
+        </div>
+      </div>
+      <a href="#about" class="scroll-hint" aria-label="Scroll down">
+        <span class="scroll-mouse"><span></span></span>
+      </a>
+    </section>
+
+    <section class="section" id="about">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">01 &mdash; Overview</p>
+          <h2>Built for the mountains, proven on the bench</h2>
+          <p class="section-sub">
+            A complete autonomy stack for standard multirotor platforms, developed and
+            tested by the Robotronics Club at IIT Mandi for real-world deployment in
+            challenging terrain.
+          </p>
+        </div>
+        <div class="about-grid">
+          <div class="about-card">
+            <span class="about-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="19" r="2"/><circle cx="19" cy="5" r="2"/><path d="M7 18.5 16.5 6.5"/><path d="M6.5 16.5h3v3"/><path d="M14.5 4.5h3v3"/></svg>
+            </span>
+            <h3>Autonomous Navigation</h3>
+            <p>Real-time 3D path planning with dynamic occupancy-grid mapping and trajectory optimization.</p>
+          </div>
+          <div class="about-card">
+            <span class="about-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="1.5"/><path d="M10.5 2v3M13.5 2v3M10.5 19v3M13.5 19v3M2 10.5h3M2 13.5h3M19 10.5h3M19 13.5h3"/><rect x="10.5" y="10.5" width="3" height="3" rx="0.5"/></svg>
+            </span>
+            <h3>State Estimation</h3>
+            <p>Visual-Inertial Odometry fused with an extended Kalman filter for GPS-denied operation.</p>
+          </div>
+          <div class="about-card">
+            <span class="about-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13.5" r="3.5"/></svg>
+            </span>
+            <h3>Vision on the Edge</h3>
+            <p>YOLOv8 detection, landing-zone recognition, and visual tracking computed onboard.</p>
+          </div>
+          <div class="about-card">
+            <span class="about-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4.5 5v6c0 4.8 3.2 8.4 7.5 11 4.3-2.6 7.5-6.2 7.5-11V5L12 2Z"/><path d="m8.8 12 2.2 2.2 4.2-4.4"/></svg>
+            </span>
+            <h3>Fail-Safe Systems</h3>
+            <p>Automated Return-to-Launch, obstacle fallback, and low-battery management triggers.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt" id="features">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">02 &mdash; Key Features</p>
+          <h2>An integrated autonomy pipeline</h2>
+          <p class="section-sub">
+            Every subsystem is designed to work together &mdash; from sensing and
+            estimation to planning and control.
+          </p>
+        </div>
+        <div class="feature-list">
+          <div class="feature-item">
+            <h3>State Estimation</h3>
+            <p>Visual-Inertial Odometry (VIO) integrated with EKF for GPS-denied environments.</p>
+          </div>
+          <div class="feature-item">
+            <h3>Trajectory Planning</h3>
+            <p>Dynamic occupancy-grid mapping with real-time 3D path and trajectory optimization.</p>
+          </div>
+          <div class="feature-item">
+            <h3>Target Detection</h3>
+            <p>Edge-computed YOLOv8 pipeline for detection, landing-zone recognition, and tracking.</p>
+          </div>
+          <div class="feature-item">
+            <h3>Fail-Safe Triggers</h3>
+            <p>Return-to-Launch, obstacle fallback avoidance, and low-battery management.</p>
+          </div>
+          <div class="feature-item">
+            <h3>Simulation Support</h3>
+            <p>Full Software-In-The-Loop (SITL) environment with Gazebo and PX4.</p>
+          </div>
+          <div class="feature-item">
+            <h3>Open Source</h3>
+            <p>A fully documented, community-driven codebase ready for extension.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="architecture">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">03 &mdash; System Architecture</p>
+          <h2>From sensors to flight controller</h2>
+          <p class="section-sub">
+            A Pixhawk 6C flight controller paired with an NVIDIA Jetson companion
+            computer over uXRCE-DDS / MAVLink.
+          </p>
+        </div>
+        <div class="arch-grid">
+          <div class="arch-card">
+            <span class="arch-tag">Flight</span>
+            <h3>Flight Control</h3>
+            <p><strong>Pixhawk 6C</strong> running PX4 v1.14+ handles attitude control, failsafes, RTL, and actuator output.</p>
+            <ul>
+              <li>FMU PWM OUT 1&ndash;4</li>
+              <li>TELEM1 &rarr; SiK telemetry</li>
+              <li>TELEM2 &rarr; Jetson (uXRCE-DDS)</li>
+              <li>RC IN &larr; SBUS override</li>
+            </ul>
+          </div>
+          <div class="arch-card">
+            <span class="arch-tag">Compute</span>
+            <h3>Companion Computer</h3>
+            <p><strong>NVIDIA Jetson Orin Nano</strong> (Ubuntu 22.04 / JetPack 5.x) hosts the full autonomy stack.</p>
+            <ul>
+              <li>VIO fusion &amp; EKF</li>
+              <li>Occupancy-grid mapping</li>
+              <li>Trajectory planning</li>
+              <li>YOLOv8 detection &amp; tracking</li>
+            </ul>
+          </div>
+          <div class="arch-card">
+            <span class="arch-tag">Perception</span>
+            <h3>Sensing</h3>
+            <p>Multi-modal perception for depth, odometry, and target imagery.</p>
+            <ul>
+              <li>Intel RealSense D435i &mdash; depth + IMU (VIO)</li>
+              <li>IMX219 / RGB camera &mdash; detection feed</li>
+              <li>Holybro M10 GPS &mdash; global positioning</li>
+            </ul>
+          </div>
+          <div class="arch-card">
+            <span class="arch-tag">Comms</span>
+            <h3>Communication</h3>
+            <p>Multi-link connectivity for ground control and remote operations.</p>
+            <ul>
+              <li>SiK radio 433/915 MHz &mdash; MAVLink GCS</li>
+              <li>RadioMaster R81 &mdash; SBUS manual control</li>
+              <li>WiFi / Ethernet &mdash; ROS 2 bridge &amp; imagery</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt" id="specs">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">04 &mdash; Hardware</p>
+          <h2>Platform specifications</h2>
+          <p class="section-sub">The Holybro X500 V2 500&nbsp;mm carbon-fiber airframe with a full autonomy payload.</p>
+        </div>
+        <div class="spec-grid">
+          <div>
+            <table class="spec-table">
+              <caption>Airframe</caption>
+              <tbody>
+                <tr><th>Wheelbase</th><td>500 mm</td></tr>
+                <tr><th>Frame</th><td>Carbon fiber, 144&times;144 mm</td></tr>
+                <tr><th>Weight</th><td>~610 g</td></tr>
+                <tr><th>Hover time</th><td>~18 min (4S 5000 mAh)</td></tr>
+                <tr><th>Max payload</th><td>~1.5 kg</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <table class="spec-table">
+              <caption>Propulsion</caption>
+              <tbody>
+                <tr><th>Motors</th><td>2216 KV920 (4)</td></tr>
+                <tr><th>ESC</th><td>BLHeli S 20A (4)</td></tr>
+                <tr><th>Props</th><td>1045 (10&times;4.5")</td></tr>
+                <tr><th>Battery</th><td>4S 3000&ndash;5200 mAh LiPo</td></tr>
+                <tr><th>PDB</th><td>XT60 in / XT30 out</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <table class="spec-table">
+              <caption>Computing</caption>
+              <tbody>
+                <tr><th>Flight controller</th><td>Pixhawk 6C (PX4)</td></tr>
+                <tr><th>Companion</th><td>Jetson Orin Nano 8 GB</td></tr>
+                <tr><th>Depth + IMU</th><td>RealSense D435i</td></tr>
+                <tr><th>Camera</th><td>IMX219 / RGB (CSI)</td></tr>
+                <tr><th>GPS</th><td>Holybro M10</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="get-started">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">05 &mdash; Get Started</p>
+          <h2>Clone, build, and fly in simulation</h2>
+          <p class="section-sub">Jump into the workspace in three steps. Full details live in the documentation.</p>
+        </div>
+        <div class="steps">
+          <div class="step">
+            <span class="step-num">01</span>
+            <h3>Clone</h3>
+            <pre><code>git clone https://github.com/the-robotronics-club/quadcopter
+cd quadcopter</code></pre>
+          </div>
+          <div class="step">
+            <span class="step-num">02</span>
+            <h3>Build</h3>
+            <pre><code>cd src
+source /opt/ros/humble/setup.bash
+colcon build --symlink-install
+source install/setup.bash</code></pre>
+          </div>
+          <div class="step">
+            <span class="step-num">03</span>
+            <h3>Simulate</h3>
+            <pre><code>micro-ros-agent udp4 --port 8888 -v
+
+# terminal 2: PX4 SITL + Gazebo
+make px4_sitl gazebo
+
+# terminal 3: autonomy bring-up
+ros2 launch quadcopter_bringup sitl_simulation.launch.py</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt" id="sponsors">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">06 &mdash; Sponsors</p>
+          <h2>Proudly supported by</h2>
+          <p class="section-sub">
+            We are grateful to the organizations that make this project possible.
+          </p>
+        </div>
+        <div class="sponsor-grid">
+          <div class="sponsor-card">
+            <span class="sponsor-logo" aria-hidden="true">S1</span>
+            <p class="sponsor-name">Sponsor One</p>
+            <p class="sponsor-desc">Support category</p>
+          </div>
+          <div class="sponsor-card">
+            <span class="sponsor-logo" aria-hidden="true">S2</span>
+            <p class="sponsor-name">Sponsor Two</p>
+            <p class="sponsor-desc">Support category</p>
+          </div>
+          <div class="sponsor-card">
+            <span class="sponsor-logo" aria-hidden="true">S3</span>
+            <p class="sponsor-name">Sponsor Three</p>
+            <p class="sponsor-desc">Support category</p>
+          </div>
+          <div class="sponsor-card">
+            <span class="sponsor-logo" aria-hidden="true">S4</span>
+            <p class="sponsor-name">Sponsor Four</p>
+            <p class="sponsor-desc">Support category</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="contact">
+      <div class="container">
+        <div class="contact-panel">
+          <div>
+            <p class="eyebrow">Contact</p>
+            <h2>Let&rsquo;s build together</h2>
+            <p>
+              Contributions, questions, and collaboration are welcome. Reach out to
+              the Robotronics Club at IIT Mandi.
+            </p>
+          </div>
+          <div class="contact-actions">
+            <a class="btn btn-primary" href="mailto:robotronics@iitmandi.ac.in">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
+              robotronics@iitmandi.ac.in
+            </a>
+            <a class="btn btn-ghost" href="https://robotronicsiitmandi.netlify.app/" target="_blank" rel="noopener">robotronicsiitmandi.netlify.app</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="#home" class="brand">
+            <svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/><path d="M12 12v6.5"/><circle cx="12" cy="19.5" r="1.6"/><rect x="8" y="7.5" width="8" height="2.6" rx="1.2"/><rect x="8.6" y="3.6" width="2.8" height="1.9" rx="0.9" fill="currentColor" stroke="none"/><rect x="12.6" y="3.6" width="2.8" height="1.9" rx="0.9" fill="currentColor" stroke="none"/><rect x="8.6" y="11.5" width="2.8" height="1.9" rx="0.9" fill="currentColor" stroke="none"/><rect x="12.6" y="11.5" width="2.8" height="1.9" rx="0.9" fill="currentColor" stroke="none"/></svg>
+            <span class="brand-text">AEROXMD</span>
+          </a>
+          <p>Autonomous aerial robotics by the Robotronics Club at the Indian Institute of Technology Mandi.</p>
+          <ul class="socials">
+            <li><a href="https://github.com/the-robotronics-club/quadcopter" target="_blank" rel="noopener" aria-label="GitHub">
+              <svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+            </a></li>
+            <li><a href="mailto:robotronics@iitmandi.ac.in" aria-label="Email">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
+            </a></li>
+            <li><a href="https://robotronicsiitmandi.netlify.app/" target="_blank" rel="noopener" aria-label="Robotronics website">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9S14.5 18.4 12 21c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3z"/></svg>
+            </a></li>
+            <li><a href="https://www.instagram.com/robotronics.iitmandi/" target="_blank" rel="noopener" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="2.5" width="19" height="19" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.2" fill="currentColor" stroke="none"/></svg>
+            </a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Platform</h4>
+          <ul>
+            <li><a href="#about">About</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#architecture">Architecture</a></li>
+            <li><a href="#specs">Specifications</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Project</h4>
+          <ul>
+            <li><a href="#get-started">Get Started</a></li>
+            <li><a href="https://github.com/the-robotronics-club/quadcopter" target="_blank" rel="noopener">Source Code</a></li>
+            <li><a href="#sponsors">Sponsors</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <ul>
+            <li><a href="mailto:robotronics@iitmandi.ac.in">robotronics@iitmandi.ac.in</a></li>
+            <li><a href="https://robotronicsiitmandi.netlify.app/" target="_blank" rel="noopener">robotronicsiitmandi.netlify.app</a></li>
+            <li><a href="https://www.instagram.com/robotronics.iitmandi/" target="_blank" rel="noopener">@robotronics.iitmandi</a></li>
+            <li>Indian Institute of Technology Mandi,<br>Kamand, Himachal Pradesh 175075</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; <span id="year"></span> AEROXMD &middot; Robotronics Club, IIT Mandi. Open-source project.</p>
+        <a href="#home" class="to-top">Back to top &uarr;</a>
+      </div>
+    </div>
+  </footer>
+
+  <a href="#home" class="back-to-top" id="back-to-top" aria-label="Back to top">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+  </a>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

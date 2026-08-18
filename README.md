@@ -12,7 +12,7 @@ An open-source, full-stack autonomous aerial navigation framework developed by t
 ![CUDA](https://img.shields.io/badge/CUDA-11.4-76B900?style=flat-square)
 ![TensorRT](https://img.shields.io/badge/TensorRT-8.x-76B900?style=flat-square)
 ![YOLOv8](https://img.shields.io/badge/YOLOv8-Detection-00CFFF?style=flat-square)
-![Gazebo](https://img.shields.io/badge/Gazebo-Garden-15C46B?style=flat-square)
+![Gazebo](https://img.shields.io/badge/Gazebo-Ignition-15C46B?style=flat-square)
 ![Git](https://img.shields.io/badge/Git-Friendly-F05032?style=flat-square&logo=git&logoColor=white)
 
 ---
@@ -48,7 +48,7 @@ computer running the ROS 2 autonomy stack.
 * **Middleware:** ROS 2 (Humble Hawksbill)
 * **Flight Stack:** PX4 Autopilot (v1.14+) via `px4_ros_com` and MicroXRCE-DDS
 * **Computer Vision:** OpenCV, CUDA, TensorRT
-* **Simulation:** Gazebo Garden / Ignition
+* **Simulation:** Gazebo Ignition
 
 ---
 
