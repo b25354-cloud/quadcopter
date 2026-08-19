@@ -66,7 +66,7 @@ rosdep update
 | ------------------ | ------------------------------------ | ------------------------------------------ |
 | PX4 Autopilot      | Firmware (SITL or hardware flashing) | [PX4 Dev Guide](https://docs.px4.io/main/en/dev_setup/building_px4.html) |
 | Gazebo Ignition   | SITL simulation environment          | Installed via the PX4 toolchain            |
-| MicroXRCE-Agent    | uXRCE-DDS agent (companion side)     | `sudo apt install micro-ros-agent` or build from source |
+| MicroXRCE-Agent    | uXRCE-DDS agent (companion side)     | `sudo apt install ros-humble-micro-ros-agent` or build from source |
 | QGroundControl     | Ground control station               | [QGC Downloads](https://qgroundcontrol.com/downloads/) |
 | Git LFS            | Large binaries / logs                | `sudo apt install git-lfs`                 |
 
@@ -182,22 +182,53 @@ rm -rf build install log           # full clean
 
 ### 6.1 MicroXRCE-DDS Agent (Required for PX4 <-> ROS 2)
 
-Start the agent on the companion computer. PX4 connects over UART (hardware) or
-UDP (SITL).
+PX4 and ROS 2 communicate over **uXRCE-DDS** (micro-ROS). The flight controller
+runs a micro XRCE-DDS *client* and the companion computer runs the
+**MicroXRCE-DDS Agent**, which exposes PX4 uORB topics on the ROS 2 graph as
+`/fmu/*` topics. Nothing works until this agent is running.
+
+#### 6.1.1 Install
 
 ```bash
-# Hardware (Jetson): UART on TELEM2
-micro-ros-agent serial --dev /dev/ttyTHS1 -b 921600
+# Option A - prebuilt Debian package (simplest)
+sudo apt install ros-humble-micro-ros-agent
 
-# SITL / simulation: UDP loopback
-micro-ros-agent udp4 --port 8888 -v
+# Option B - build from source (latest, useful on Jetson)
+git clone https://github.com/eProsima/Micro-XRCE-DDS-Agent.git
+cd Micro-XRCE-DDS-Agent && mkdir build && cd build
+cmake ..
+make
+sudo make install
+sudo ldconfig
 ```
 
-Verify the agent is up:
+Both produce the `MicroXRCEAgent` executable (and, if installed via the ROS
+package, the `micro-ros-agent` alias).
+
+#### 6.1.2 Transports
+
+| Transport | Use case                   | Command                                              |
+| --------- | -------------------------- | ---------------------------------------------------- |
+| UDP       | SITL simulation (loopback) | `MicroXRCEAgent udp4 -p 8888 -v`                     |
+| Serial    | Pixhawk over UART (TELEM2) | `MicroXRCEAgent serial --dev /dev/ttyTHS1 -b 921600` |
+| Ethernet  | Pixhawk on the network     | `MicroXRCEAgent udp4 -p 2019 -r 2020`                |
+
+#### 6.1.3 PX4-side configuration
+
+- **Hardware (Pixhawk):** set `UXRCE_DDS_CFG` to **TELEM2** and
+  `SER_TEL2_BAUD` to `921600` in QGroundControl, then reboot the flight
+  controller.
+- **SITL:** the PX4 SITL firmware starts its own uXRCE-DDS client on UDP port
+  `8888`, so the agent must listen on that port. No extra config required.
+
+#### 6.1.4 Verify
 
 ```bash
 ros2 daemon stop && ros2 topic list | grep -E 'fmu|vehicle'
 ```
+
+If no `/fmu/*` topics appear, the agent is not running, the client is not
+connected, or the transport/baud settings are wrong.
 
 ### 6.2 Inspect the ROS 2 Graph
 
@@ -210,8 +241,9 @@ ros2 topic echo /fmu/out/vehicle_attitude
 ### 6.3 Example Nodes (`px4_ros_com`)
 
 ```bash
-# Sensor data listener
+# Sensor data listeners
 ros2 run px4_ros_com sensor_combined_listener
+ros2 run px4_ros_com vehicle_gps_position_listener
 
 # Offboard control example (CAUTION: engages motors)
 ros2 run px4_ros_com offboard_control
@@ -221,38 +253,66 @@ Or via launch files:
 
 ```bash
 ros2 launch px4_ros_com sensor_combined_listener.launch.py
-ros2 launch px4_ros_com offboard_control_launch.yaml
 ```
 
 ### 6.4 Bringup - Simulation (SITL)
 
 ```bash
-# Terminal 1 - MicroXRCE-DDS agent
-micro-ros-agent udp4 --port 8888 -v
+# Terminal 1 - MicroXRCE-DDS agent over UDP loopback
+MicroXRCEAgent udp4 -p 8888 -v
 
-# Terminal 2 - PX4 SITL + Gazebo (from the PX4 source directory)
+# Terminal 2 - PX4 SITL + Gazebo (from the PX4-Autopilot source directory)
 make px4_sitl gazebo
 
-# Terminal 3 - Autonomy stack
+# Terminal 3 - ROS 2 node
 cd src && source install/setup.bash
-ros2 launch quadcopter_bringup sitl_simulation.launch.py
+ros2 run quadcopter_bringup teleop
 ```
 
 ### 6.5 Bringup - Hardware (Real Robot)
 
 1. Power the airframe; confirm the Pixhawk boots and the Jetson links over
    UART.
-2. Verify MAVLink telemetry in QGroundControl.
-3. Start the agent and bringup:
+2. Set `UXRCE_DDS_CFG` = TELEM2 and `SER_TEL2_BAUD` = 921600 in
+   QGroundControl and reboot the flight controller.
+3. Verify MAVLink telemetry in QGroundControl.
+4. Start the agent and the ROS 2 node:
 
 ```bash
-micro-ros-agent serial --dev /dev/ttyTHS1 -b 921600
+MicroXRCEAgent serial --dev /dev/ttyTHS1 -b 921600
 
 cd src && source install/setup.bash
-ros2 launch quadcopter_bringup real_robot.launch.py
+ros2 run quadcopter_bringup teleop
 ```
 
-### 6.6 Common Runtime Checks
+### 6.6 Controlling the Quadcopter (Keyboard Teleop)
+
+`quadcopter_bringup` ships a keyboard teleop node that drives the PX4
+velocity setpoints in Offboard mode over uXRCE-DDS:
+
+```bash
+ros2 run quadcopter_bringup teleop
+```
+
+| Key      | Action                    |
+| -------- | ------------------------- |
+| `w`      | Move forward (+X)         |
+| `s`      | Move back (-X)            |
+| `a`      | Move left (+Y)            |
+| `d`      | Move right (-Y)           |
+| `r`      | Move up (-Z, NED)         |
+| `f`      | Move down (+Z, NED)       |
+| `x`      | Stop / hover in place     |
+| `q`      | Increase max speed by 10% |
+| `z`      | Decrease max speed by 10% |
+| `Ctrl+C` | Exit safely               |
+
+The node publishes `OffboardControlMode` and `TrajectorySetpoint` at 20 Hz,
+switches PX4 to **Offboard** mode after ~15 setpoints, and sends the **arm**
+command after ~30. Always keep the RC transmitter in an override-capable mode
+and test in SITL before hardware.
+
+### 6.7 Common Runtime Checks
 
 ```bash
 # Lifecycle state (if the node is lifecycle-managed)
@@ -347,11 +407,13 @@ colcon test --packages-select quadcopter_bringup
 | Symptom                              | Likely Cause                            | Resolution                                                        |
 | ------------------------------------ | --------------------------------------- | ----------------------------------------------------------------- |
 | No `/fmu/*` topics                   | MicroXRCE-Agent not running             | Start the agent (Section 6.1); verify with `ros2 topic list`.      |
-| `colcon build` fails on `px4_msgs`   | Stale CMake cache                       | `colcon build --packages-select px4_msgs --cmake-clean-cache`.     |
-| Agent disconnects on hardware        | Wrong port / baud rate                  | Check TELEM2 wiring and set `-b 921600` (or the PX4-configured rate). |
+| Agent starts but no data in SITL     | Wrong UDP port                         | PX4 SITL client uses port `8888`; run `MicroXRCEAgent udp4 -p 8888`. |
+| Agent disconnects on hardware        | Wrong port / baud rate                  | Check TELEM2 wiring, set `-b 921600`, and confirm `UXRCE_DDS_CFG` = TELEM2 in QGC. |
 | `ros2 run` says package not found    | Workspace not sourced                   | `source install/setup.bash` after `colcon build`.                  |
+| `ros2 run quadcopter_bringup teleop` not found | Old build / entry point not installed | `colcon build --packages-select quadcopter_bringup --symlink-install`. |
 | Lint test failures                   | Style violations                        | Run `colcon test --packages-select quadcopter_bringup` and fix reported issues. |
 | SITL model does not start            | Gazebo / PX4 environment not sourced    | Source the PX4 `Tools/setup_gazebo.bash` and `~/PX4-Autopilot` env. |
+| Teleop does not arm                  | Not in Offboard / safety checks fail    | Confirm mode switch + arm log lines; check QGC arming checks; keep RC override available. |
 | High CPU/temperature on Jetson       | Clock throttling                        | `sudo jetson_clocks`; cap detection frame rate.                    |
 
 ---

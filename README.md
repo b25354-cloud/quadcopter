@@ -71,34 +71,156 @@ rosdep install --from-paths src --ignore-src -r -y
 ### Build
 
 ```bash
-# Build using colcon (needs to be written after adding code)
+cd src
+source /opt/ros/humble/setup.bash
 colcon build --symlink-install
 source install/setup.bash
 ```
 
-### Running Simulation (SITL)
+---
 
-To launch the PX4 SITL environment with Gazebo and the ROS 2 autonomy node:
+## MicroXRCE-DDS Agent
 
-```bash
-ros2 launch quadcopter_bringup sitl_simulation.launch.py #needs to be written
-```
+PX4 and ROS 2 communicate over **uXRCE-DDS** (micro-ROS): the flight controller
+runs a micro XRCE-DDS *client* while the companion computer runs the
+**MicroXRCE-DDS Agent** (`MicroXRCEAgent`), which bridges PX4 uORB topics onto
+the ROS 2 graph as `/fmu/*` topics.
 
-### Hardware Deployment
-
-1. Establish MAVLink communication between PX4 and Jetson over UART/USB (`/dev/ttyTHS1`).
-2. Run the bringup package on the companion computer:
+### Install
 
 ```bash
-ros2 launch quadcopter_bringup real_robot.launch.py #needs to be written
+# Option A - prebuilt Debian package (simplest)
+sudo apt install ros-humble-micro-ros-agent
+
+# Option B - build from source (latest)
+git clone https://github.com/eProsima/Micro-XRCE-DDS-Agent.git
+cd Micro-XRCE-DDS-Agent && mkdir build && cd build
+cmake ..
+make
+sudo make install
+sudo ldconfig
 ```
+
+### Run
+
+| Transport | Use case                   | Command                                              |
+| --------- | -------------------------- | ---------------------------------------------------- |
+| UDP       | SITL simulation (loopback) | `MicroXRCEAgent udp4 -p 8888 -v`                     |
+| Serial    | Pixhawk over UART (TELEM2) | `MicroXRCEAgent serial --dev /dev/ttyTHS1 -b 921600` |
+| Ethernet  | Pixhawk on the network     | `MicroXRCEAgent udp4 -p 2019 -r 2020`                |
+
+> **Hardware:** set PX4 `UXRCE_DDS_CFG` to TELEM2 and `SER_TEL2_BAUD` to
+> `921600` in QGroundControl before first use.
+> **SITL:** the PX4 SITL firmware starts its own uXRCE-DDS client on UDP
+> port `8888`, so the agent must listen on that port.
+
+Verify the agent is up and PX4 is connected:
+
+```bash
+ros2 daemon stop
+ros2 topic list | grep -E 'fmu|vehicle'
+```
+
+If no `/fmu/*` topics appear, the agent is not running or the client is not
+connected.
+
+---
+
+## Running the System (ROS 2)
+
+### Simulation (SITL)
+
+```bash
+# Terminal 1 - MicroXRCE-DDS agent over UDP loopback
+MicroXRCEAgent udp4 -p 8888 -v
+
+# Terminal 2 - PX4 SITL + Gazebo (from the PX4-Autopilot source directory)
+make px4_sitl gazebo
+
+# Terminal 3 - ROS 2 nodes
+cd src && source install/setup.bash
+ros2 run quadcopter_bringup teleop
+```
+
+### Hardware
+
+1. Power the airframe; confirm the Pixhawk boots and links over UART.
+2. Verify telemetry in QGroundControl (`UXRCE_DDS_CFG` = TELEM2).
+3. Start the agent and the ROS 2 node:
+
+```bash
+MicroXRCEAgent serial --dev /dev/ttyTHS1 -b 921600
+
+cd src && source install/setup.bash
+ros2 run quadcopter_bringup teleop
+```
+
+### Inspect the ROS 2 Graph
+
+```bash
+ros2 node list
+ros2 topic list
+ros2 topic echo /fmu/out/vehicle_attitude
+```
+
+### px4_ros_com Example Nodes
+
+```bash
+# Sensor data listeners
+ros2 run px4_ros_com sensor_combined_listener
+ros2 run px4_ros_com vehicle_gps_position_listener
+
+# Offboard control example (CAUTION: engages motors)
+ros2 run px4_ros_com offboard_control
+
+# Launched versions
+ros2 launch px4_ros_com sensor_combined_listener.launch.py
+```
+
+---
+
+## Controlling the Quadcopter
+
+Use the keyboard teleop node from `quadcopter_bringup`:
+
+```bash
+ros2 run quadcopter_bringup teleop
+```
+
+| Key      | Action                    |
+| -------- | ------------------------- |
+| `w`      | Move forward (+X)         |
+| `s`      | Move back (-X)            |
+| `a`      | Move left (+Y)            |
+| `d`      | Move right (-Y)           |
+| `r`      | Move up (-Z, NED)         |
+| `f`      | Move down (+Z, NED)       |
+| `x`      | Stop / hover in place     |
+| `q`      | Increase max speed by 10% |
+| `z`      | Decrease max speed by 10% |
+| `Ctrl+C` | Exit safely               |
+
+The node publishes `OffboardControlMode` and `TrajectorySetpoint` at 20 Hz,
+switches PX4 to **Offboard** mode after ~15 setpoints, and **arms** after ~30.
+Always keep the RC transmitter in an override-capable flight mode and test in
+SITL before any hardware trial.
 
 ---
 
 ## Repository Structure
 
 ```text
-needs to be written after pushing code
+quadcopter/
+|-- README.md                    # Project overview
+|-- INSTRUCTIONS.md              # Build / launch / control guide
+|-- hardware/                    # Mechanical / airframe docs
+|-- electronics/                 # Wiring, BOM, system architecture
+|-- src/                         # ROS 2 colcon workspace
+|   |-- quadcopter_bringup/      # Autonomy package (teleop control node)
+|   |-- px4_ros_com/             # PX4 <-> ROS 2 bridge + example nodes
+|   |-- px4_msgs/                # PX4 uORB message definitions
+|   `-- worlds/                  # Simulation world files
+`-- website/                     # Project website
 ```
 
 ---

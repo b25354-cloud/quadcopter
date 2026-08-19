@@ -74,28 +74,49 @@ Requires the MicroXRCE-DDS agent over UDP and PX4 SITL running:
 
 ```bash
 # Terminal 1 - agent
-micro-ros-agent udp4 --port 8888 -v
+MicroXRCEAgent udp4 -p 8888 -v
 
-# Terminal 2 - PX4 SITL + Gazebo (from the PX4 source directory)
+# Terminal 2 - PX4 SITL + Gazebo (from the PX4-Autopilot source directory)
 make px4_sitl gazebo
 
 # Terminal 3 - bring-up
 cd <workspace>/src && source install/setup.bash
-ros2 launch quadcopter_bringup sitl_simulation.launch.py
+ros2 run quadcopter_bringup teleop
 ```
 
 ### 4.2 Hardware
 
-Requires the agent on UART and PX4 powered:
+Requires the agent on UART and PX4 powered (with `UXRCE_DDS_CFG` = TELEM2 and
+`SER_TEL2_BAUD` = 921600 in QGroundControl):
 
 ```bash
-micro-ros-agent serial --dev /dev/ttyTHS1 -b 921600
+MicroXRCEAgent serial --dev /dev/ttyTHS1 -b 921600
 
 cd <workspace>/src && source install/setup.bash
-ros2 launch quadcopter_bringup real_robot.launch.py
+ros2 run quadcopter_bringup teleop
 ```
 
-### 4.3 Verify
+### 4.3 Keyboard Teleop Control
+
+The `teleop` executable drives the PX4 velocity setpoints in Offboard mode:
+
+| Key      | Action                    |
+| -------- | ------------------------- |
+| `w`      | Move forward (+X)         |
+| `s`      | Move back (-X)            |
+| `a`      | Move left (+Y)            |
+| `d`      | Move right (-Y)           |
+| `r`      | Move up (-Z, NED)         |
+| `f`      | Move down (+Z, NED)       |
+| `x`      | Stop / hover in place     |
+| `q`      | Increase max speed by 10% |
+| `z`      | Decrease max speed by 10% |
+| `Ctrl+C` | Exit safely               |
+
+It publishes `OffboardControlMode` and `TrajectorySetpoint` at 20 Hz, switches
+PX4 to **Offboard** mode after ~15 setpoints, and arms after ~30.
+
+### 4.4 Verify
 
 ```bash
 ros2 node list

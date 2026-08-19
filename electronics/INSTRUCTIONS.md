@@ -95,7 +95,7 @@ In QGroundControl, run calibrations in this order:
    the MicroXRCE-DDS agent:
 
 ```bash
-micro-ros-agent serial --dev /dev/ttyTHS1 -b 921600
+MicroXRCEAgent serial --dev /dev/ttyTHS1 -b 921600
 ```
 
 4. Configure USB permission so the RealSense and IMX219 camera streams appear
