@@ -2,3 +2,8 @@
 src/build
 src/install
 src/log
+venv/
+*.pt
+*.onnx
+__pycache__/
+*.pyc
