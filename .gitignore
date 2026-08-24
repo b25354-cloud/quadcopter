@@ -2,3 +2,11 @@
 src/build
 src/install
 src/log
+# ROS 2 / colcon generated files
+build/
+install/
+log/
+
+# Python cache
+__pycache__/
+*.pyc
