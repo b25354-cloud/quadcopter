@@ -95,6 +95,11 @@ Wrote SDF (world) -> house.sdf
 Load it in Gazebo:
 
 ```bash
+#for gz sim
 gz sim house.sdf       # if exported with --world
 gz sim -r house.sdf     # run immediately
+
+#foor Ignition Gazebo
+ign gazebo house.sdf     # open world
+ign gazebo -r house.sdf  # open and run immediately
 ```
